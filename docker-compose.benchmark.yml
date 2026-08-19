@@ -1,0 +1,80 @@
+version: '3.8'
+
+# ==============================================================================
+# Controlled Hardware Benchmark Environment (Secondary Isolation Benchmark)
+# All containers are strictly constrained to 0.5 CPU and 256MB RAM
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Neo4j Community 5.x
+  # Bolt port: 7687, HTTP port: 7474
+  # ----------------------------------------------------------------------------
+  neo4j-local:
+    image: neo4j:5.18-community
+    container_name: benchmark-neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/benchmarkpassword123
+      - NEO4J_dbms_memory_heap_initial__size=128m
+      - NEO4J_dbms_memory_heap_max__size=160m
+      - NEO4J_dbms_memory_pagecache_size=64m
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------------
+  # 2. Memgraph Community
+  # Bolt port: 7688 (mapped from 7687 to avoid port clash)
+  # ----------------------------------------------------------------------------
+  memgraph-local:
+    image: memgraph/memgraph:2.15
+    container_name: benchmark-memgraph
+    command: ["--memory-limit=220"]
+    ports:
+      - "7688:7687"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------------
+  # 3. FalkorDB Community
+  # Redis RESP port: 6379
+  # ----------------------------------------------------------------------------
+  falkordb-local:
+    image: falkordb/falkordb:latest
+    container_name: benchmark-falkordb
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------------
+  # 4. ArangoDB Community
+  # HTTP port: 8529
+  # ----------------------------------------------------------------------------
+  arangodb-local:
+    image: arangodb:3.11
+    container_name: benchmark-arangodb
+    environment:
+      - ARANGO_ROOT_PASSWORD=benchmarkpassword123
+    ports:
+      - "8529:8529"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped

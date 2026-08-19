@@ -1,0 +1,105 @@
+# ==============================================================================
+# WEXA AI Graph Database Benchmarking Suite Configuration
+# ==============================================================================
+
+meta:
+  benchmark_name: "wexa-graph-database-cloud-benchmark"
+  version: "1.0.0"
+  random_seed: 42
+
+dataset:
+  name: "snap-musae-github"
+  source_url: "https://snap.stanford.edu/data/git_web_ml.zip"
+  fallback_mirror_url: "https://raw.githubusercontent.com/benedekrozemberczki/datasets/master/musae_git_edges.csv"
+  target_mirror_url: "https://raw.githubusercontent.com/benedekrozemberczki/datasets/master/musae_git_target.csv"
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  nodes_file: "data/processed/nodes.csv"
+  edges_file: "data/processed/edges.csv"
+  manifest_file: "data/processed/manifest.json"
+  expected_nodes_count: 37700
+  expected_edges_count: 289003
+
+workloads:
+  ingestion:
+    batch_size: 1000
+    create_indexes_after_load: true
+
+  warmup:
+    iterations: 30
+    description: "Pre-warm buffer pools and query plan caches before recording metrics"
+
+  traversals:
+    iterations: 100
+    sample_nodes_count: 100
+    description: "Multi-hop neighborhood traversals on deterministically sampled start nodes"
+
+  lookups:
+    iterations: 100
+    description: "Point lookup by primary key ID and indexed lookup on developer_type"
+    indexed_properties:
+      - label: "Developer"
+        property: "developer_type"
+      - label: "Developer"
+        property: "node_id"
+
+  aggregation:
+    iterations: 100
+    description: "Full graph group-by count by developer category"
+
+  mixed:
+    read_write_ratio: 0.80 # 80% Reads, 20% Writes
+    concurrency_levels: [1, 10, 40]
+    duration_seconds: 20 # duration per concurrency level in seconds
+    smoke_duration_seconds: 5
+
+databases:
+  cognodb:
+    display_name: "CognoDB Cloud"
+    adapter_class: "benchmark.adapters.cognodb.CognoDBAdapter"
+    category: "subject_cloud"
+    env_prefix: "COGNODB"
+    default_timeout_sec: 30
+
+  neo4j:
+    display_name: "Neo4j AuraDB Free"
+    adapter_class: "benchmark.adapters.neo4j_adapter.Neo4jAdapter"
+    category: "competitor_cloud"
+    env_prefix: "NEO4J"
+    default_timeout_sec: 30
+
+  memgraph:
+    display_name: "Memgraph"
+    adapter_class: "benchmark.adapters.memgraph.MemgraphAdapter"
+    category: "competitor_in_memory"
+    env_prefix: "MEMGRAPH"
+    default_timeout_sec: 30
+
+  falkordb:
+    display_name: "FalkorDB"
+    adapter_class: "benchmark.adapters.falkordb_adapter.FalkorDBAdapter"
+    category: "competitor_matrix"
+    env_prefix: "FALKORDB"
+    default_timeout_sec: 30
+
+  arangodb:
+    display_name: "ArangoDB"
+    adapter_class: "benchmark.adapters.arangodb_adapter.ArangoDBAdapter"
+    category: "competitor_multimodel"
+    env_prefix: "ARANGODB"
+    default_timeout_sec: 30
+
+  kuzu:
+    display_name: "Kùzu (Local Columnar Baseline)"
+    adapter_class: "benchmark.adapters.kuzu_adapter.KuzuAdapter"
+    category: "baseline_columnar"
+    env_prefix: "KUZU"
+    default_timeout_sec: 30
+
+output:
+  raw_dir: "results/raw"
+  processed_dir: "results/processed"
+  summary_csv: "results/processed/summary.csv"
+  summary_json: "results/processed/summary.json"
+  summary_markdown: "results/processed/summary.md"
+  charts_dir: "charts"
