@@ -186,7 +186,7 @@ cp .env.example .env
 ```
 Populate connection details for the platforms you want to benchmark:
 ```ini
-COGNODB_URI=bolt+s://<your-instance>.cognodb.com:7687
+COGNODB_URI=bolt+s://<instance-id>.databases.cognodb.cloud
 COGNODB_USER=cognodb
 COGNODB_PASSWORD=your_password
 COGNODB_DATABASE=cognodb
