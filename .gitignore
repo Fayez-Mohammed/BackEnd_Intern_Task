@@ -35,6 +35,7 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+data/*kuzu_db*
 
 # Benchmark outputs & raw runs
 results/raw/*
