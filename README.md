@@ -167,8 +167,8 @@ graph-database-benchmark/
 ### 1. Prerequisites & Virtual Environment
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/graph-database-benchmark.git
-cd graph-database-benchmark
+git clone https://github.com/Fayez-Mohammed/BackEnd_Intern_Task.git
+cd BackEnd_Intern_Task
 
 # Create and activate virtual environment
 python -m venv .venv
