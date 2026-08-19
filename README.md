@@ -227,6 +227,29 @@ python scripts/generate_charts.py
 
 ## 9. Benchmark Results & Visualizations
 
+### Actual Executed Benchmark Results Matrix
+
+| Database | Workload | Iterations / Ops | Throughput (QPS) | p50 Latency (ms) | p95 Latency (ms) | Min (ms) | Max (ms) | Errors | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **CognoDB Cloud** | `ingestion_nodes` | 37,700 nodes | 1,448.5 nodes/s | 26,026.50 | 26,026.50 | 26,026.50 | 26,026.50 | 0 | Full SNAP dataset |
+| **CognoDB Cloud** | `ingestion_edges` | 289,003 edges | 1,766.3 edges/s | 163,619.70 | 163,619.70 | 163,619.70 | 163,619.70 | 0 | Streamed in 1k batches |
+| **CognoDB Cloud** | `traversal_1hop` | 100 runs | 6.22 QPS | 151.05 | 218.74 | 147.70 | 246.61 | 0 | 100% success rate |
+| **CognoDB Cloud** | `traversal_2hop` | 100 runs | 3.57 QPS | 260.46 | 535.91 | 149.13 | 640.40 | 0 | 2-hop neighborhood |
+| **CognoDB Cloud** | `traversal_3hop` | 100 runs | 0.04 QPS | 2,892.55 | 6,499.68 | 2,431.41 | 6,900.48 | 97 | Deep unconstrained traversal |
+| **CognoDB Cloud** | `point_lookup` | 100 runs | 4.31 QPS | 151.46 | 304.66 | 148.75 | 1,326.03 | 8 | Primary key ID lookup |
+| **CognoDB Cloud** | `indexed_lookup`| 100 runs | 5.27 QPS | 192.97 | 254.83 | 160.27 | 282.66 | 0 | Filter on `developer_type` |
+| **CognoDB Cloud** | `aggregation` | 100 runs | 4.36 QPS | 195.91 | 372.79 | 186.50 | 468.62 | 0 | Full-graph group-by count |
+| **CognoDB Cloud** | `mixed_concurrency_c1` | 116 ops | 5.80 QPS | 155.96 | 253.14 | 148.36 | 365.24 | 0 | 1 Worker client (80/20 mix) |
+| **CognoDB Cloud** | `mixed_concurrency_c10`| 1,229 ops | 61.09 QPS | 152.51 | 194.51 | 146.02 | 822.32 | 0 | 10 Workers (10.5x scaling!) |
+| **CognoDB Cloud** | `mixed_concurrency_c40`| 4,261 ops | 211.47 QPS | 168.33 | 254.00 | 145.91 | 932.37 | 0 | 40 Workers (36.5x scaling!) |
+| **Kùzu Baseline** | `traversal_1hop` | 100 runs | 319.00 QPS | 2.91 | 4.54 | 2.21 | 5.52 | 0 | In-process columnar engine |
+| **Kùzu Baseline** | `traversal_2hop` | 100 runs | 113.03 QPS | 8.56 | 16.45 | 3.12 | 19.79 | 0 | Columnar graph cache |
+| **Kùzu Baseline** | `traversal_3hop` | 100 runs | 0.45 QPS | 591.58 | 7,616.26 | 4.30 | 12,335.50 | 0 | In-memory 3-hop expansion |
+| **Kùzu Baseline** | `point_lookup` | 100 runs | 208.16 QPS | 4.60 | 6.39 | 3.97 | 9.42 | 0 | In-process primary key |
+| **Kùzu Baseline** | `indexed_lookup`| 100 runs | 609.68 QPS | 1.53 | 2.20 | 1.34 | 3.00 | 0 | Columnar scan |
+| **Kùzu Baseline** | `aggregation` | 100 runs | 307.50 QPS | 3.11 | 4.31 | 2.71 | 5.62 | 0 | Vectorized aggregation |
+| **Kùzu Baseline** | `mixed_concurrency_c40`| 8,195 ops | 328.85 QPS | 52.10 | 352.99 | 0.00 | 1,309.63 | 0 | In-process thread pool |
+
 ### Visualizations Generated
 All charts are generated with labeled units, error distributions, and clean themes in [`charts/`](file:///D:/Task/charts):
 
